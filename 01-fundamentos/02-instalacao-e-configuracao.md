@@ -1,5 +1,5 @@
 # 🐘 Módulo 01: Fundamentos de Banco de Dados e PostgreSQL
-## 📑 Aula 02: Instalação, Docker e Ferramental de Trabalho
+## 📑 Aula 02: Preparação do Ubuntu Server, Instalação do Docker e Ferramental de Trabalho
 
 > **Navegação**: [⬅️ Aula Anterior: Introdução](./01-introducao-ao-banco-de-dados.md) | [Módulo 01](./README.md) | [Próxima Aula: Arquitetura Interna ➡️](./03-arquitetura-postgresql.md)
 
@@ -7,41 +7,165 @@
 
 ### 🎯 Objetivos de Aprendizagem
 Ao final desta aula, você será capaz de:
-- Subir uma instância do PostgreSQL 16 utilizando **Docker** e **Docker Compose**.
-- Conectar-se ao banco via terminal utilizando o cliente interativo **`psql`**.
-- Dominar os meta-comandos mais frequentes do `psql` (`\l`, `\c`, `\dt`, `\d+`, `\dn`, `\q`).
-- Configurar interfaces gráficas como **DBeaver** ou **pgAdmin**.
-- Entender a estrutura padrão de uma Connection String (URI).
+- Preparar um servidor limpo com **Ubuntu Server** (22.04 ou 24.04 LTS) do zero via linha de comando.
+- Instalar e configurar o **Docker Engine** e o plugin **Docker Compose** a partir do repositório oficial do Docker.
+- Ajustar permissões de usuário no Linux para operar o Docker sem necessidade de `sudo`.
+- Configurar regras de firewall (`ufw`) para expor a porta padrão `5432`.
+- Orquestrar o container do PostgreSQL 16 com persistência de dados em volumes.
+- Instalar o cliente `postgresql-client` no Ubuntu e operar o terminal interativo `psql`.
+- Conectar remotamente utilizando o **Beekeeper Studio Portable** executado no seu computador de trabalho.
 
 ---
 
-### 1. Métodos de Instalação: Qual Escolher?
+### 1. Cenário de Laboratório: Partindo do Zero no Ubuntu Server
 
-Existem três maneiras principais de rodar o PostgreSQL durante os estudos e desenvolvimento:
+Neste guia, assumimos que o estudante está diante do terminal limpo de um **Ubuntu Server** recém-instalado (seja em máquina virtual como VirtualBox, VMware, WSL2 ou em uma VPS na nuvem). Não há nada previamente instalado.
 
 ```mermaid
-graph TD
-    Opcao[Como rodar o PostgreSQL?] --> InstalaLocal[Instalador Nativo SO]
-    Opcao --> ContainerDocker[Container Docker / Compose]
-    Opcao --> CloudNeon[Nuvem Serverless: Neon]
+flowchart TD
+    A["1. Ubuntu Server Limpo (Terminal Bash)"] --> B["2. Atualização de Pacotes (apt update / upgrade)"]
+    B --> C["3. Instalação das Dependências (curl, gnupg, ca-certificates)"]
+    C --> D["4. Adição do Repositório Oficial do Docker"]
+    D --> E["5. Instalação do Docker Engine e Compose Plugin"]
+    E --> F["6. Pós-Instalação: Permissões de Grupo e Systemd"]
+    F --> G["7. Criação do compose.yaml e Subida do PostgreSQL 16"]
+    G --> H["8. Conexão Local (psql) e Remota (Beekeeper Studio Portable)"]
+```
 
-    InstalaLocal -->|Prós: Serviço nativo<br>Contras: Polui o SO, conflitos de porta| IL[Linux / Windows / macOS]
-    ContainerDocker -->|Prós: Isolado, reproduzível, descartável<br>Padrão na indústria| CD[Docker Desktop / Podman]
-    CloudNeon -->|Prós: Sem instalar nada localmente, branches instantâneos| CN[Neon Console Grátis]
+---
+
+### 2. Passo a Passo Completo: Preparando o Ubuntu Server e Instalando o Docker
+
+Execute os passos a seguir sequencialmente no terminal do seu Ubuntu Server.
+
+#### Passo 2.1: Atualizar os Repositórios e Pacotes do Sistema
+Antes de qualquer instalação, sincronize a lista de pacotes e aplique as correções mais recentes do sistema operacional:
+
+```bash
+sudo apt update && sudo apt upgrade -y
+```
+
+#### Passo 2.2: Instalar Pacotes Utilitários Básicos e Pré-requisitos
+Instalamos ferramentas essenciais para manipulação de chaves criptográficas e download seguro via HTTPS:
+
+```bash
+sudo apt install -y ca-certificates curl gnupg lsb-release
+```
+
+#### Passo 2.3: Adicionar a Chave GPG Oficial do Docker
+Para garantir autenticidade e segurança, baixamos a chave pública oficial do Docker:
+
+```bash
+# Cria o diretório de chaveiros do apt com permissões seguras
+sudo install -m 0755 -d /etc/apt/keyrings
+
+# Baixa a chave criptográfica oficial do Docker
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+
+# Ajusta permissão de leitura para todos os usuários
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+```
+
+#### Passo 2.4: Registrar o Repositório Oficial do Docker no APT
+Configuramos a fonte de pacotes estável apropriada para a arquitetura do seu processador (`x86_64` ou `arm64`):
+
+```bash
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Atualiza os índices do apt com o novo repositório
+sudo apt update
+```
+
+#### Passo 2.5: Instalar o Docker Engine e o Plugin Docker Compose
+Agora instalamos o motor oficial do Docker, a interface de linha de comando (`docker-ce-cli`) e o plugin moderno do Compose (`docker-compose-plugin`):
+
+```bash
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+```
+
+#### Passo 2.6: Configuração Pós-Instalação: Permissões de Usuário
+Por padrão, o socket do Docker pertence ao usuário `root`. Para que o estudante consiga rodar comandos do Docker sem digitar `sudo` a cada operação:
+
+```bash
+# Adiciona o usuário logado ao grupo 'docker'
+sudo usermod -aG docker $USER
+
+# Habilita o serviço no systemd para iniciar automaticamente no boot do servidor
+sudo systemctl enable --now docker
+
+# Atualiza o grupo da sessão do terminal atual sem precisar deslogar
+newgrp docker
+```
+
+#### Passo 2.7: Validar a Instalação do Docker
+Verifique se o motor e o Compose estão respondendo perfeitamente:
+
+```bash
+# Testa a execução de um container de diagnóstico
+docker run --rm hello-world
+
+# Verifica a versão do Compose (deve exibir Docker Compose version v2.x.x)
+docker compose version
 ```
 
 > [!TIP]
-> Para o aprendizado moderno, recomendamos o **Docker** para ambiente offline/local e o **Neon PostgreSQL** para trabalhos em nuvem e projetos em equipe.
+> Se o comando `docker run --rm hello-world` executar e exibir a mensagem de boas-vindas do Docker sem erros de permissão de socket, o seu Ubuntu Server está 100% pronto!
 
 ---
 
-### 2. Subindo com Docker e Docker Compose (Recomendado)
+### 3. Instalação do Cliente Nativo `postgresql-client` no Ubuntu
 
-O Docker garante que toda a turma de alunos execute exatamente a mesma versão do PostgreSQL, com as mesmas configurações de porta, senhas e volumes, independentemente de estarem no Windows, Linux ou macOS.
+É uma excelente prática instalar as ferramentas de cliente do PostgreSQL diretamente no Ubuntu Server. Dessa forma, você ganha acesso ao executável `psql` e ao `pg_dump` no próprio host, sem precisar entrar dentro de containers:
 
-#### Arquivo `compose.yaml`:
+```bash
+sudo apt install -y postgresql-client
+```
 
-```yaml
+Verifique a versão instalada:
+```bash
+psql --version
+```
+
+---
+
+### 4. Configuração de Rede e Firewall (UFW)
+
+Se você planeja conectar ferramentas visuais instaladas no seu computador pessoal (como o Beekeeper Studio no Windows ou macOS) ao Ubuntu Server rodando em uma VM ou rede local:
+
+#### Descobrir o Endereço IP do seu Ubuntu Server:
+```bash
+hostname -I
+```
+*(Anote o primeiro IP listado, por exemplo: `192.168.1.50` ou `10.0.2.15`).*
+
+#### Liberar a Porta 5432 no Firewall (caso o UFW esteja ativo):
+```bash
+# Permite tráfego TCP na porta do PostgreSQL
+sudo ufw allow 5432/tcp
+
+# Verifica o status atual das regras
+sudo ufw status
+```
+
+---
+
+### 5. Criando a Estrutura do Laboratório com Docker Compose
+
+Como estamos em um ambiente de servidor sem interface gráfica, criaremos o diretório de trabalho e o arquivo de orquestração inteiramente via terminal.
+
+#### Passo 5.1: Criar e Acessar o Diretório do Projeto
+```bash
+mkdir -p ~/postgres-lab && cd ~/postgres-lab
+```
+
+#### Passo 5.2: Criar o Arquivo `compose.yaml` via Linha de Comando
+Utilize o comando `cat` com redirecionador para criar o arquivo sem precisar de editores manuais:
+
+```bash
+cat << 'EOF' > compose.yaml
 services:
   postgres:
     image: postgres:16-alpine
@@ -52,178 +176,144 @@ services:
       POSTGRES_PASSWORD: secretpassword123
       POSTGRES_DB: universidade
     ports:
-      - "5432:5432"
+      - "0.0.0.0:5432:5432"
     volumes:
       - postgres_dados:/var/lib/postgresql/data
 
 volumes:
   postgres_dados:
     driver: local
+EOF
 ```
 
-#### Comandos de gerenciamento:
+> [!NOTE]
+> O mapeamento `"0.0.0.0:5432:5432"` instrui o Docker a escutar em todas as interfaces de rede do servidor, permitindo tanto conexões locais (`localhost`) quanto conexões externas vindas da sua rede local.
+
+#### Passo 5.3: Inicializar o Container do PostgreSQL
+```bash
+# Baixa a imagem postgres:16-alpine e inicia em segundo plano (-d)
+docker compose up -d
+```
+
+#### Passo 5.4: Comandos Úteis de Gerenciamento no Linux
 
 ```bash
-# Iniciar o container em segundo plano (detached mode)
-docker compose up -d
-
-# Verificar se o container está rodando e saudável
+# Verificar se o container está ativo e com status "Up"
 docker compose ps
 
-# Visualizar logs em tempo real
+# Visualizar logs em tempo real (pressione Ctrl + C para sair dos logs)
 docker compose logs -f postgres
 
-# Parar o container mantendo os dados salvos no volume
+# Parar o container mantendo os dados preservados no volume
 docker compose down
-```
 
-> [!WARNING]
-> A porta padrão do PostgreSQL é a **5432**. Se você já tiver outra instância do Postgres instalada na máquina, haverá conflito de porta (`address already in use`). Nesse caso, altere o mapeamento no compose para `"5433:5432"`.
+# Reiniciar o container
+docker compose restart postgres
+```
 
 ---
 
-### 3. Anatomia de uma Connection String (URI)
+### 6. Conectando-se ao Banco pelo Terminal: O Cliente `psql`
 
-Tanto aplicações em Node.js, Python, Java quanto ferramentas gráficas usam a especificação de URI de conexão:
+Você tem duas maneiras equivalentes de abrir o terminal interativo do PostgreSQL:
 
-```text
-postgresql://[usuario]:[senha]@[host]:[porta]/[nome_do_banco]?sslmode=[modo]
-```
-
-#### Exemplo prático:
-```text
-postgresql://admin:secretpassword123@localhost:5432/universidade?sslmode=disable
-```
-
-* **Protocolo**: `postgresql://` (ou `postgres://`)
-* **Usuário**: `admin`
-* **Senha**: `secretpassword123`
-* **Host**: `localhost` (ou `127.0.0.1`, ou endpoint na nuvem)
-* **Porta**: `5432`
-* **Database**: `universidade`
-* **Parâmetros**: `sslmode=disable` (para local) ou `sslmode=require` (para serviços em nuvem como o Neon).
-
----
-
-### 4. Dominando o Terminal: Cliente Interativo `psql`
-
-O `psql` é a ferramenta de linha de comando mais poderosa e rápida para administração do PostgreSQL.
-
-#### Conectando via Docker:
+#### Método A: Conectando de dentro do container Docker
 ```bash
 docker exec -it postgres_estudos psql -U admin -d universidade
 ```
 
-#### Conectando via terminal local:
+#### Método B: Conectando via `postgresql-client` instalado no Ubuntu Server
 ```bash
 psql -h localhost -p 5432 -U admin -d universidade
 ```
+*(Quando solicitado, digite a senha configurada no compose: `secretpassword123`).*
 
-#### Meta-comandos Essenciais (Começam com barra invertida `\`):
+#### Meta-comandos Fundamentais do `psql`:
 
 | Comando | Descrição | Equivalente em outros bancos |
 | :--- | :--- | :--- |
 | `\l` | Lista todos os bancos de dados do servidor | `SHOW DATABASES;` |
 | `\c nome_banco` | Conecta-se a outro banco de dados | `USE nome_banco;` |
 | `\dt` | Lista todas as tabelas do schema atual | `SHOW TABLES;` |
-| `\dt+` | Lista tabelas com tamanho em disco e descrição | Detalhes físicos |
+| `\dt+` | Lista tabelas exibindo tamanho em disco | Detalhes físicos |
 | `\d nome_tabela` | Descreve colunas, tipos e constraints da tabela | `DESCRIBE nome_tabela;` |
 | `\dn` | Lista todos os Schemas existentes | N/A |
-| `\du` | Lista usuários e suas permissões/roles | `SELECT * FROM mysql.user;` |
-| `\x` | Alterna modo de exibição expandido (ótimo para linhas com muitas colunas) | Formatação vertical |
-| `\timing` | Liga/Desliga o cronômetro de tempo de execução das queries | Benchmark rápido |
-| `\i caminho/arquivo.sql` | Executa um script SQL a partir do arquivo | Executar script externo |
-| `\q` | Sai do cliente psql | Sair / Exit |
+| `\du` | Lista usuários e roles de permissão | `SELECT * FROM mysql.user;` |
+| `\x` | Alterna modo de exibição expandido (vertical) | Formatação por registro |
+| `\timing` | Liga/Desliga o cronômetro de medição de tempo das queries | Benchmark rápido |
+| `\i arquivo.sql` | Executa comandos contidos em um arquivo SQL externo | Execução de script |
+| `\q` | Sai do cliente psql e retorna ao prompt do Linux | Sair / Exit |
 
-> [!NOTE]
-> Comandos SQL tradicionais exigem ponto e vírgula no final (`;`). Meta-comandos do `psql` (que iniciam com `\`) **NÃO** utilizam ponto e vírgula.
+> [!IMPORTANT]
+> Comandos SQL tradicionais terminam obrigatoriamente com ponto e vírgula (`;`). Os meta-comandos que iniciam com barra invertida (`\`) **não utilizam** ponto e vírgula.
 
 ---
 
-### 5. Interfaces Gráficas: Beekeeper Studio Portable (Recomendado para Aulas)
+### 7. Interface Gráfica: Beekeeper Studio Portable (Opção Recomendada)
 
-Para desenvolvimento diário e visualização de tabelas, uma interface gráfica intuitiva acelera o aprendizado dos estudantes.
+Para estudantes que utilizam seus computadores pessoais para visualizar os dados rodando no Ubuntu Server:
 
-#### 🐝 A Escolha Ideal para Laboratórios: Beekeeper Studio Community (Portable)
-
-Em laboratórios de faculdades, escolas técnicas ou computadores corporativos, estudantes frequentemente enfrentam **bloqueios de permissão de administrador** que impedem instalar programas convencionais.
-
-O **Beekeeper Studio Community Edition (Versão Portable)** resolve esse problema por completo:
+#### 🐝 Por que o Beekeeper Studio Portable é a Escolha Ideal?
+Em computadores de laboratório com bloqueio de instalação ou máquinas pessoais, o **Beekeeper Studio Community Edition (Portable)** roda com duplo clique sem precisar de instalador:
 
 ```mermaid
 flowchart LR
-    Download[Download do Arquivo Portátil] --> Pendrive["Executa Direto da Pasta ou Pen Drive<br>(Sem precisar de Administrador!)"]
-    Pendrive --> Conexao["Conecta em 1 Clique:<br>Docker Local ou Neon Cloud"]
-    Conexao --> Pratica[Pronto para as Aulas Práticas!]
+    Ubuntu["Ubuntu Server (Porta 5432 Aberta)"] <-->|Conexão TCP Rede Local| BK["Beekeeper Studio Portable<br>(PC do Estudante)"]
+    NeonCloud["Neon Cloud Serverless"] <-->|Conexão SSL Segura| BK
 ```
 
-> [!TIP]
-> **Por que recomendamos o Beekeeper Studio para os estudantes?**
-> * **Zero Instalação**: O executável roda diretamente com duplo clique (não altera registros do Windows nem precisa de privilégios de `root`/administrador).
-> * **Interface Limpa e Focada**: Diferente de ferramentas pesadas e com excesso de opções complexas (como pgAdmin ou DBeaver), o Beekeeper possui foco total na escrita e execução de SQL.
-> * **Importação Instantânea via URL**: Possui o botão **"Import from URL"**, permitindo colar a Connection String inteira do Neon ou do Docker sem preencher campos manualmente.
-> * **Visualizador e Editor de Dados**: Permite filtrar, ordenar e editar registros em formato de planilha visual interativa.
-> * **Histórico Automático**: Guarda o histórico de todas as consultas executadas para fácil recuperação durante os exercícios.
+* **Sem necessidade de privilégios de Administrador**: Roda direto do pendrive ou da pasta Downloads.
+* **Interface Limpa**: Foco direto em consultas, edição de dados e histórico de comandos.
+* **Importação Fácil via URL**: Conecta em segundos utilizando a URI do banco.
 
-#### Onde Baixar a Versão Portátil (Open Source):
-Acesse a página oficial de lançamentos no GitHub: [Releases do Beekeeper Studio](https://github.com/beekeeper-studio/beekeeper-studio/releases) (ou [beekeeperstudio.io](https://www.beekeeperstudio.io)):
+#### Onde Baixar:
+Acesse os [Releases Oficiais do Beekeeper Studio no GitHub](https://github.com/beekeeper-studio/beekeeper-studio/releases):
+* **Windows**: `Beekeeper-Studio-Portable-x.x.x.exe`
+* **Linux Desktop**: `Beekeeper-Studio-x.x.x.AppImage` (conceda permissão com `chmod +x`)
+* **macOS**: `Beekeeper-Studio-x.x.x.dmg`
 
-* **Windows**: Baixe o arquivo `Beekeeper-Studio-Portable-x.x.x.exe`.
-* **Linux**: Baixe o arquivo `Beekeeper-Studio-x.x.x.AppImage` (basta torná-lo executável com `chmod +x` e abrir com duplo clique).
-* **macOS**: Baixe o instalador `.dmg` compatível com Apple Silicon (arm64) ou Intel.
-
-#### Como Configurar sua Primeira Conexão no Beekeeper:
-
-1. Abra o executável do **Beekeeper Studio**.
-2. Na tela inicial, clique no botão **"Import from URL"** (canto superior da tela de nova conexão).
-3. **Para o PostgreSQL Local (Docker)**:
-   - Cole a URI: `postgresql://admin:secretpassword123@localhost:5432/universidade?sslmode=disable`
-4. **Para o Neon PostgreSQL (Nuvem)**:
-   - Cole a URI obtida no painel do Neon: `postgresql://alex:senha@ep-divine-pond-123456.us-east-2.aws.neon.tech/neondb?sslmode=require`
-5. Clique no botão **Test Connection** (Testar Conexão). Se aparecer a mensagem verde de sucesso, clique em **Connect** e salve com o nome *"Postgres Aula"*!
+#### Como Conectar ao seu Ubuntu Server pelo Beekeeper:
+1. Abra o Beekeeper Studio no seu computador.
+2. Clique no botão **"Import from URL"** no topo da tela inicial.
+3. Cole a URI substituindo pelo IP do seu Ubuntu Server (obtido no Passo 4):
+   ```text
+   postgresql://admin:secretpassword123@<IP_DO_UBUNTU_SERVER>:5432/universidade?sslmode=disable
+   ```
+4. Clique em **Test Connection**. Ao receber a confirmação verde, clique em **Salvar e Conectar**.
 
 ---
 
-#### 🛠️ Outras Opções Disponíveis no Mercado
+### 8. Exercício Prático: Testando o Ambiente Completo
 
-Caso o aluno já tenha preferência por outra ferramenta instalada:
-1. **DBeaver Community**: Gratuito e poderoso, com suporte a diagramas ER automáticos (mais pesado em consumo de memória).
-2. **pgAdmin 4**: Ferramenta oficial web/desktop mantida pelo PostgreSQL Global Development Group.
-3. **TablePlus**: Interface minimalista e ultrarrápida (versão gratuita possui limitação de 2 abas abertas).
-4. **Extensão Database Client (VS Code)**: Excelente para quem deseja rodar queries sem sair do editor de código.
-
----
-
-### 6. Exercício Prático: O Primeiro "Hello World" Relacional
-
-Conecte-se ao seu PostgreSQL via `psql` ou terminal e execute as instruções abaixo:
+Conecte-se ao seu PostgreSQL (seja pelo terminal via `psql` ou pelo Beekeeper Studio) e execute o script abaixo:
 
 ```sql
--- 1. Verificar a versão exata do PostgreSQL
+-- 1. Inspecionar a versão do motor
 SELECT version();
 
--- 2. Criar uma tabela simples de teste
-CREATE TABLE boas_vindas (
-    id SERIAL PRIMARY KEY,
-    mensagem VARCHAR(100) NOT NULL,
-    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- 2. Criar tabela de verificação do laboratório
+CREATE TABLE ambiente_laboratorio (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    servidor_so TEXT NOT NULL,
+    docker_ativo BOOLEAN DEFAULT TRUE,
+    data_configuracao TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
--- 3. Inserir o primeiro registro
-INSERT INTO boas_vindas (mensagem)
-VALUES ('Olá, PostgreSQL 16! Bem-vindo ao curso.');
+-- 3. Inserir registro confirmando o setup
+INSERT INTO ambiente_laboratorio (servidor_so)
+VALUES ('Ubuntu Server 24.04 LTS com Docker Compose');
 
--- 4. Consultar os dados
-SELECT * FROM boas_vindas;
+-- 4. Consultar os dados gravados
+SELECT * FROM ambiente_laboratorio;
 ```
 
 <details>
 <summary>👁️ Clique aqui para ver o resultado esperado</summary>
 
 ```text
- id |                   mensagem                   |         criado_em          
-----+----------------------------------------------+----------------------------
-  1 | Olá, PostgreSQL 16! Bem-vindo ao curso.      | 2026-10-07 14:45:00.123456
+ id |               servidor_so                | docker_ativo |       data_configuracao       
+----+------------------------------------------+--------------+-------------------------------
+  1 | Ubuntu Server 24.04 LTS com Docker Compose | t            | 2026-10-07 15:20:00.123456-03
 (1 row)
 ```
 </details>
@@ -232,10 +322,15 @@ SELECT * FROM boas_vindas;
 
 ### 📝 Checklist de Conclusão da Aula
 
-- [ ] Instalei ou subi o container Docker do PostgreSQL com sucesso.
-- [ ] Consegui conectar usando o `psql` e executei o comando `\l`.
-- [ ] Compreendi os componentes da Connection String `postgresql://user:pass@host:port/db`.
-- [ ] Criei a tabela de teste e confirmei a gravação do registro.
+- [ ] Atualizei os repositórios do Ubuntu Server (`sudo apt update && sudo apt upgrade -y`).
+- [ ] Adicionei a chave GPG e o repositório oficial do Docker para Ubuntu.
+- [ ] Instalei os pacotes `docker-ce`, `docker-ce-cli` e `docker-compose-plugin`.
+- [ ] Adicionei meu usuário ao grupo `docker` e validei com `docker run --rm hello-world`.
+- [ ] Instalei o cliente nativo `postgresql-client`.
+- [ ] Criei o diretório `~/postgres-lab` e o arquivo `compose.yaml`.
+- [ ] Subi o container do PostgreSQL 16 com `docker compose up -d` e verifiquei o status.
+- [ ] Conectei com sucesso usando o `psql` e executei o script de teste.
+- [ ] Configurei o Beekeeper Studio Portable para conectar no banco.
 
 ---
 > **Navegação**: [⬅️ Aula Anterior: Introdução](./01-introducao-ao-banco-de-dados.md) | [Módulo 01](./README.md) | [Próxima Aula: Arquitetura Interna ➡️](./03-arquitetura-postgresql.md)

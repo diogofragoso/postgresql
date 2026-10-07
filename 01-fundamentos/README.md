@@ -30,11 +30,13 @@ flowchart LR
    - SQL vs NoSQL e a abordagem híbrida do Postgres.
    - História de Michael Stonebraker e evolução da licença open source.
 
-2. [**Aula 02: Instalação, Docker e Ferramental de Trabalho**](./02-instalacao-e-configuracao.md)
-   - Setup com Docker Compose (`postgres:16-alpine`).
-   - Anatomia de URIs e strings de conexão.
+2. [**Aula 02: Preparação do Ubuntu Server, Instalação do Docker e Ferramental de Trabalho**](./02-instalacao-e-configuracao.md)
+   - Preparação do Ubuntu Server do zero (atualizações, dependências e repositório oficial do Docker).
+   - Instalação do Docker Engine e Compose Plugin com permissões de usuário sem sudo.
+   - Instalação do `postgresql-client` e regras de firewall UFW.
+   - Setup com Docker Compose (`postgres:16-alpine`) e anatomia de URIs.
    - Cliente de linha de comando `psql` e seus meta-comandos.
-   - Escolha de interfaces gráficas (DBeaver, TablePlus, pgAdmin).
+   - Conexão gráfica com Beekeeper Studio Portable (recomendado para aulas).
    - Primeiro exercício prático executável.
 
 3. [**Aula 03: Arquitetura Interna, Processos, WAL e MVCC**](./03-arquitetura-postgresql.md)

@@ -95,7 +95,7 @@ flowchart TD
 
 | Módulo | Descrição dos Tópicos | Link do Guia |
 | :--- | :--- | :---: |
-| **01. Fundamentos** | História do PostgreSQL, SGBDs relacionais vs NoSQL, Instalação local, Docker, `psql`, pgAdmin e arquitetura do PostgreSQL (processos, memória, WAL, MVCC). | [Acessar Guia](./01-fundamentos/) |
+| **01. Fundamentos** | História do PostgreSQL, SGBDs relacionais vs NoSQL, Preparação do Ubuntu Server do zero, instalação oficial do Docker, `psql`, Beekeeper Studio Portable e arquitetura interna (processos, memória, WAL, MVCC). | [Acessar Guia](./01-fundamentos/) |
 | **02. Modelagem e DDL** | Diagramação ER, Normalização (1FN a 3FN), Tipos Primitivos, JSONB, Arrays, UUID, Chaves Primárias, Estrangeiras, Check Constraints e boas práticas de schema. | [Acessar Guia](./02-modelagem-e-ddl/) |
 | **03. DML e Consultas** | `INSERT`, `UPDATE`, `DELETE`, `ON CONFLICT` (UPSERT), `SELECT`, `WHERE`, `LIKE/ILIKE`, `GROUP BY`, `HAVING`, todas as variantes de `JOIN` e Subqueries. | [Acessar Guia](./03-manipulacao-dml-e-consultas/) |
 | **04. SQL Avançado** | Views e Views Materializadas, Índices (B-Tree, GIN, GiST, BRIN), Análise de planos com `EXPLAIN ANALYZE`, ACID, Níveis de Isolamento, Locks, Triggers, Procedures e Window Functions. | [Acessar Guia](./04-recursos-avancados-sql/) |

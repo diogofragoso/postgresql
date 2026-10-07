@@ -156,4 +156,19 @@ neonctl sql "SELECT count(*) FROM clientes;"
 ```
 
 ---
+
+### 🐝 Atalhos Rápidos do Beekeeper Studio (Portable)
+
+| Atalho (Windows/Linux) | Atalho (macOS) | Ação no Beekeeper Studio |
+| :--- | :--- | :--- |
+| `Ctrl + Enter` | `Cmd + Enter` | Executa a query atual onde o cursor está posicionado |
+| `Ctrl + Shift + Enter` | `Cmd + Shift + Enter` | Executa todo o conteúdo do editor da aba |
+| `Ctrl + Shift + F` | `Cmd + Shift + F` | Formata e indenta o código SQL automaticamente |
+| `Ctrl + T` | `Cmd + T` | Abre uma nova aba de editor SQL |
+| `Ctrl + W` | `Cmd + W` | Fecha a aba atual |
+| `Ctrl + S` | `Cmd + S` | Salva a consulta na lista de consultas salvas |
+| `Ctrl + P` | `Cmd + P` | Busca rápida por tabelas ou consultas salvas |
+| **Botão "Import from URL"** | **Botão "Import from URL"** | Cola Connection String direta do Docker ou Neon com autoconfiguração |
+
+---
 > **Navegação**: [⬅️ Módulo 06](../06-projetos-praticos-e-desafios/README.md) | [Módulo 07](./README.md) | [Próximo: Guia de Resolução de Erros ➡️](./guia-resolucao-de-erros.md)
