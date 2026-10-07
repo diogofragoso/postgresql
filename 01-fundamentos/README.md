@@ -15,9 +15,12 @@ Bem-vindo ao primeiro módulo do curso! Aqui estabelecemos a base teórica e ins
 ## 🗺️ Mapa de Conteúdo do Módulo
 
 ```mermaid
-flowchart LR
-    A["01. Introdução e ACID"] --> B["02. Instalação e Ferramental"]
-    B --> C["03. Arquitetura Interna e MVCC"]
+flowchart TD
+    A["01. Introdução e ACID"] --> B{"02. Escolha da Trilha"}
+    B -->|Infra, Redes e Linux| B1["Trilha A: Ubuntu Server com Docker"]
+    B -->|Dev, SQL e Análise| B2["Trilha B: Neon Cloud e Beekeeper"]
+    B1 --> C["03. Arquitetura Interna e MVCC"]
+    B2 --> C
 ```
 
 ---
@@ -30,14 +33,10 @@ flowchart LR
    - SQL vs NoSQL e a abordagem híbrida do Postgres.
    - História de Michael Stonebraker e evolução da licença open source.
 
-2. [**Aula 02: Preparação do Ubuntu Server, Instalação do Docker e Ferramental de Trabalho**](./02-instalacao-e-configuracao.md)
-   - Preparação do Ubuntu Server do zero (atualizações, dependências e repositório oficial do Docker).
-   - Instalação do Docker Engine e Compose Plugin com permissões de usuário sem sudo.
-   - Instalação do `postgresql-client` e regras de firewall UFW.
-   - Setup com Docker Compose (`postgres:16-alpine`) e anatomia de URIs.
-   - Cliente de linha de comando `psql` e seus meta-comandos.
-   - Conexão gráfica com Beekeeper Studio Portable (recomendado para aulas).
-   - Primeiro exercício prático executável.
+2. [**Aula 02: Preparação do Ambiente: Escolha da sua Trilha de Laboratório**](./02-instalacao-e-configuracao.md)
+   - Guia de decisão para professores e alunos (quando usar Trilha A vs Trilha B).
+   - [**Trilha A: Ubuntu Server com Docker**](./02a-trilha-ubuntu-server-docker.md) — Setup do zero no Linux, repositório oficial do Docker, `docker compose`, permissões sem sudo, UFW, `postgresql-client` e teste de validação.
+   - [**Trilha B: Neon Serverless Cloud e Beekeeper Studio**](./02b-trilha-neon-cloud-beekeeper.md) — Setup instantâneo na nuvem gratuita sem gerenciar servidores, Web SQL Editor e cliente desktop portátil **Beekeeper Studio** sem necessidade de administrador.
 
 3. [**Aula 03: Arquitetura Interna, Processos, WAL e MVCC**](./03-arquitetura-postgresql.md)
    - Modelo baseado em processos (*process-per-connection*).

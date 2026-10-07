@@ -1,7 +1,7 @@
 # 🐘 Módulo 01: Fundamentos de Banco de Dados e PostgreSQL
 ## 📑 Aula 03: Arquitetura Interna, Processos, WAL e MVCC
 
-> **Navegação**: [⬅️ Aula Anterior: Instalação e Docker](./02-instalacao-e-configuracao.md) | [Módulo 01](./README.md) | [Módulo 02: Modelagem e DDL ➡️](../02-modelagem-e-ddl/README.md)
+> **Navegação**: [⬅️ Aula Anterior: Escolha da Trilha de Setup](./02-instalacao-e-configuracao.md) | [Módulo 01](./README.md) | [Módulo 02: Modelagem e DDL ➡️](../02-modelagem-e-ddl/README.md)
 
 ---
 
@@ -201,4 +201,4 @@ flowchart LR
 - [ ] Entendi a necessidade do processo `Autovacuum` para limpeza de tuplas mortas.
 
 ---
-> **Navegação**: [⬅️ Aula Anterior: Instalação e Docker](./02-instalacao-e-configuracao.md) | [Módulo 01](./README.md) | [Módulo 02: Modelagem e DDL ➡️](../02-modelagem-e-ddl/README.md)
+> **Navegação**: [⬅️ Aula Anterior: Escolha da Trilha de Setup](./02-instalacao-e-configuracao.md) | [Módulo 01](./README.md) | [Módulo 02: Modelagem e DDL ➡️](../02-modelagem-e-ddl/README.md)

@@ -1,7 +1,7 @@
 # 🐘 Módulo 01: Fundamentos de Banco de Dados e PostgreSQL
 ## 📑 Aula 01: Introdução ao Banco de Dados e ao Ecossistema PostgreSQL
 
-> **Navegação**: [🏠 Início](../README.md) | [Módulo 01](./README.md) | [Próxima Aula: Instalação e Configuração ➡️](./02-instalacao-e-configuracao.md)
+> **Navegação**: [🏠 Início](../README.md) | [Módulo 01](./README.md) | [Próxima Aula: Escolha da Trilha de Setup ➡️](./02-instalacao-e-configuracao.md)
 
 ---
 
@@ -115,4 +115,4 @@ graph TD
 - [ ] Qual o papel de Michael Stonebraker na computação e na criação do Postgres?
 
 ---
-> **Navegação**: [🏠 Início](../README.md) | [Módulo 01](./README.md) | [Próxima Aula: Instalação e Configuração ➡️](./02-instalacao-e-configuracao.md)
+> **Navegação**: [🏠 Início](../README.md) | [Módulo 01](./README.md) | [Próxima Aula: Escolha da Trilha de Setup ➡️](./02-instalacao-e-configuracao.md)

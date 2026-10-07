@@ -47,8 +47,11 @@ flowchart TD
     classDef proj fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#880e4f;
 
     subgraph M1["Módulo 1: Fundamentos"]
-        A1["01. Intro a Banco de Dados"] --> A2["02. Instalação e Ferramental"]
-        A2 --> A3["03. Arquitetura Interna e MVCC"]
+        A1["01. Intro a Banco de Dados"] --> A2{"02. Escolha da Trilha"}
+        A2 -->|Turma Infra e Linux| A2a["Trilha A: Ubuntu Server e Docker"]
+        A2 -->|Turma Dev e SQL| A2b["Trilha B: Neon Cloud e Beekeeper"]
+        A2a --> A3["03. Arquitetura Interna e MVCC"]
+        A2b --> A3
     end
 
     subgraph M2["Módulo 2: Modelagem e DDL"]
@@ -123,9 +126,12 @@ Para tirar o máximo proveito deste guia, sugerimos o seguinte ciclo de estudo:
 
 Se você é professor ou líder técnico ministrando treinamentos:
 
+* **Direcionamento de Trilha para sua Turma**:
+  - **Turmas de Infraestrutura, Redes e DevOps**: Oriente os alunos a seguirem a [**Trilha A: Ubuntu Server com Docker**](./01-fundamentos/02a-trilha-ubuntu-server-docker.md) para aprenderem comandos Linux, repositório oficial do Docker, compose e UFW.
+  - **Turmas de Desenvolvimento, Análise de Dados e SQL**: Oriente os alunos a **pularem a Trilha A** e seguirem direto para a [**Trilha B: Neon Cloud e Beekeeper Studio**](./01-fundamentos/02b-trilha-neon-cloud-beekeeper.md). Eles terão um banco na nuvem ativo em 2 minutos sem atrito de instalação!
 * **Aulas Expositivas**: Utilize os diagramas Mermaid dos módulos `01-fundamentos` e `05-neon-postgresql-cloud` para ilustrar a arquitetura interna e o paradigma cloud-native.
 * **Aulas de Laboratório**: O módulo `06-projetos-praticos-e-desafios/01-projeto-ecommerce.md` fornece uma base de dados realista para atividades individuais ou em duplas.
-* **Ambiente Isolação sem Custo**: Instrua seus alunos a criarem uma branch própria no Neon para cada exercício ou prova prática. Isso elimina conflitos de dados e garante que o professor possa corrigir revisando a branch específica.
+* **Ambiente com Isolamento sem Custo**: Instrua seus alunos a criarem uma branch própria no Neon para cada exercício ou prova prática. Isso elimina conflitos de dados e garante que o professor possa corrigir revisando a branch específica de cada estudante.
 * **Tarefas de Casa**: Use a lista de exercícios do módulo `06-projetos-praticos-e-desafios/02-banco-de-questoes-e-exercicios.md`.
 
 > [!IMPORTANT]
