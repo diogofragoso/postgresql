@@ -140,14 +140,57 @@ psql -h localhost -p 5432 -U admin -d universidade
 
 ---
 
-### 5. Interfaces Gráficas Recomendadas (GUIs)
+### 5. Interfaces Gráficas: Beekeeper Studio Portable (Recomendado para Aulas)
 
-Para desenvolvimento diário, interfaces visuais aumentam a produtividade:
+Para desenvolvimento diário e visualização de tabelas, uma interface gráfica intuitiva acelera o aprendizado dos estudantes.
 
-1. **DBeaver Community**: Software livre, multiplataforma, suporta diagramas ER automáticos e autocomplete avançado.
-2. **pgAdmin 4**: Ferramenta oficial mantida pelo PostgreSQL Group.
-3. **TablePlus**: Interface minimalista, extremamente leve e nativa.
-4. **Extensão do VS Code (Database Client / SQLTools)**: Permite rodar queries diretamente no seu editor de código.
+#### 🐝 A Escolha Ideal para Laboratórios: Beekeeper Studio Community (Portable)
+
+Em laboratórios de faculdades, escolas técnicas ou computadores corporativos, estudantes frequentemente enfrentam **bloqueios de permissão de administrador** que impedem instalar programas convencionais.
+
+O **Beekeeper Studio Community Edition (Versão Portable)** resolve esse problema por completo:
+
+```mermaid
+flowchart LR
+    Download[Download do Arquivo Portátil] --> Pendrive["Executa Direto da Pasta ou Pen Drive<br>(Sem precisar de Administrador!)"]
+    Pendrive --> Conexao["Conecta em 1 Clique:<br>Docker Local ou Neon Cloud"]
+    Conexao --> Pratica[Pronto para as Aulas Práticas!]
+```
+
+> [!TIP]
+> **Por que recomendamos o Beekeeper Studio para os estudantes?**
+> * **Zero Instalação**: O executável roda diretamente com duplo clique (não altera registros do Windows nem precisa de privilégios de `root`/administrador).
+> * **Interface Limpa e Focada**: Diferente de ferramentas pesadas e com excesso de opções complexas (como pgAdmin ou DBeaver), o Beekeeper possui foco total na escrita e execução de SQL.
+> * **Importação Instantânea via URL**: Possui o botão **"Import from URL"**, permitindo colar a Connection String inteira do Neon ou do Docker sem preencher campos manualmente.
+> * **Visualizador e Editor de Dados**: Permite filtrar, ordenar e editar registros em formato de planilha visual interativa.
+> * **Histórico Automático**: Guarda o histórico de todas as consultas executadas para fácil recuperação durante os exercícios.
+
+#### Onde Baixar a Versão Portátil (Open Source):
+Acesse a página oficial de lançamentos no GitHub: [Releases do Beekeeper Studio](https://github.com/beekeeper-studio/beekeeper-studio/releases) (ou [beekeeperstudio.io](https://www.beekeeperstudio.io)):
+
+* **Windows**: Baixe o arquivo `Beekeeper-Studio-Portable-x.x.x.exe`.
+* **Linux**: Baixe o arquivo `Beekeeper-Studio-x.x.x.AppImage` (basta torná-lo executável com `chmod +x` e abrir com duplo clique).
+* **macOS**: Baixe o instalador `.dmg` compatível com Apple Silicon (arm64) ou Intel.
+
+#### Como Configurar sua Primeira Conexão no Beekeeper:
+
+1. Abra o executável do **Beekeeper Studio**.
+2. Na tela inicial, clique no botão **"Import from URL"** (canto superior da tela de nova conexão).
+3. **Para o PostgreSQL Local (Docker)**:
+   - Cole a URI: `postgresql://admin:secretpassword123@localhost:5432/universidade?sslmode=disable`
+4. **Para o Neon PostgreSQL (Nuvem)**:
+   - Cole a URI obtida no painel do Neon: `postgresql://alex:senha@ep-divine-pond-123456.us-east-2.aws.neon.tech/neondb?sslmode=require`
+5. Clique no botão **Test Connection** (Testar Conexão). Se aparecer a mensagem verde de sucesso, clique em **Connect** e salve com o nome *"Postgres Aula"*!
+
+---
+
+#### 🛠️ Outras Opções Disponíveis no Mercado
+
+Caso o aluno já tenha preferência por outra ferramenta instalada:
+1. **DBeaver Community**: Gratuito e poderoso, com suporte a diagramas ER automáticos (mais pesado em consumo de memória).
+2. **pgAdmin 4**: Ferramenta oficial web/desktop mantida pelo PostgreSQL Global Development Group.
+3. **TablePlus**: Interface minimalista e ultrarrápida (versão gratuita possui limitação de 2 abas abertas).
+4. **Extensão Database Client (VS Code)**: Excelente para quem deseja rodar queries sem sair do editor de código.
 
 ---
 

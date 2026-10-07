@@ -139,8 +139,9 @@ Antes de iniciar, certifique-se de possuir:
 
 - [ ] Vontade de aprender e praticar diariamente.
 - [ ] Um navegador moderno para acesso ao Neon Web Console.
+- [ ] **Beekeeper Studio Portable** (Community Edition) para visualização e execução gráfica sem precisar de permissões de administrador no laboratório.
 - [ ] Um editor de código (VS Code, Antigravity IDE, Cursor ou similar).
-- [ ] Opcional (para estudo local): Docker ou PostgreSQL Client (`psql`) instalado.
+- [ ] Opcional (para estudo local offline): Docker ou PostgreSQL Client (`psql`) instalado.
 
 ---
 

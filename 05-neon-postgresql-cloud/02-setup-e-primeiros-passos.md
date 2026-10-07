@@ -113,9 +113,23 @@ psql "postgresql://alex:AbCdEfGh123@ep-divine-pond-123456.us-east-2.aws.neon.tec
 
 ---
 
-### 5. Executando no SQL Editor Embutido do Neon
+### 5. Conectando com o Beekeeper Studio Portable ao Neon
 
-Se um aluno estiver em um computador bloqueado ou sem Docker/psql instalado:
+Para estudantes que preferem uma interface gráfica limpa sem precisar instalar nada na máquina do laboratório:
+
+1. Baixe o **Beekeeper Studio Portable** (Community Edition).
+2. No painel do Neon, copie a sua **Connection String**.
+3. No Beekeeper Studio, clique no botão **"Import from URL"** no canto superior da tela inicial.
+4. Cole a Connection String do Neon (exemplo: `postgresql://alex:senha@ep-divine-pond-123456.us-east-2.aws.neon.tech/neondb?sslmode=require`).
+5. O Beekeeper preencherá automaticamente o host, usuário, porta e ativará o **SSL Mode: require**.
+6. Clique em **Test Connection** e depois em **Connect**.
+7. Pronto! Você tem um ambiente gráfico de alta produtividade conectado ao seu banco serverless no Neon.
+
+---
+
+### 6. Executando no SQL Editor Embutido do Neon
+
+Se um aluno estiver em um computador bloqueado ou sem Docker/psql/Beekeeper instalado:
 1. No painel do Neon, clique na aba **`SQL Editor`** no menu lateral.
 2. Digite sua query e clique no botão **`Run`** (ou use o atalho `Ctrl + Enter` / `Cmd + Enter`).
 3. O resultado e o tempo de resposta aparecerão imediatamente na tela.
@@ -135,6 +149,7 @@ SELECT
 
 - [ ] Criei minha conta gratuita e inicializei meu projeto no Neon.
 - [ ] Entendi por que o endpoint com `-pooler` é necessário em Serverless.
+- [ ] Conectei ao Neon via `psql` ou Beekeeper Studio Portable.
 - [ ] Executei meu primeiro comando no SQL Editor do console do Neon.
 - [ ] Sei que a conexão em nuvem exige o parâmetro `sslmode=require`.
 
