@@ -56,6 +56,13 @@ flowchart LR
    - Navegação em árvores genealógicas e organogramas com `WITH RECURSIVE`.
    - Funções de Janela: `ROW_NUMBER`, `RANK`, `DENSE_RANK`, `LAG`, `LEAD` e médias móveis.
 
+6. [**Atividades Práticas do Módulo 04**](./06-atividades-praticas.md)
+   - **Subitem 4.1**: Views Virtuais com Segurança e Views Materializadas de Alta Velocidade.
+   - **Subitem 4.2**: Diagnóstico de Performance com `EXPLAIN ANALYZE` e Covering Indexes.
+   - **Subitem 4.3**: Laboratório de Concorrência e Simulação de Deadlock em Sessões Paralelas.
+   - **Subitem 4.4**: Automação com PL/pgSQL: Trigger de Auditoria e Sanitização.
+   - **Subitem 4.5**: Análise Temporal com Window Functions e CTEs Recursivas.
+
 ---
 
 ## 🧭 Navegação Rápida

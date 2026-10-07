@@ -194,6 +194,46 @@ LIMIT 2;
 
 ---
 
+### 6. Atividade Prática 08: Busca Semântica e Indexação HNSW com pgvector
+
+Nesta atividade, você irá aprofundar o uso de Inteligência Artificial no PostgreSQL, calculando a porcentagem de similaridade e acelerando a busca com o algoritmo moderno **HNSW (Hierarchical Navigable Small World)**.
+
+#### 🎯 Desafio Prático:
+1. Com base na tabela `documentos_ia` criada acima, crie um índice vetorial do tipo **HNSW** na coluna `embedding` usando a métrica de distância do cosseno (`vector_cosine_ops`).
+2. Escreva uma consulta que receba um vetor de pergunta `[0.85, 0.12, 0.10]` e retorne:
+   - O conteúdo do documento.
+   - A distância do cosseno bruta.
+   - O **score de similaridade percentual** calculado como: `ROUND(((1 - (embedding <=> '[0.85, 0.12, 0.10]')) * 100)::numeric, 2) AS similaridade_pct`.
+3. Filtre para trazer apenas documentos com similaridade superior a 80% e ordene pelo mais relevante.
+
+<details>
+<summary>👁️ Clique aqui para ver o script SQL da solução</summary>
+
+```sql
+-- 1. Criação do índice de alta performance HNSW
+CREATE INDEX IF NOT EXISTS idx_documentos_ia_hnsw 
+ON documentos_ia 
+USING hnsw (embedding vector_cosine_ops)
+WITH (m = 16, ef_construction = 64);
+
+-- 2. Consulta de Busca Semântica com score percentual
+SELECT 
+    conteudo,
+    ROUND((embedding <=> '[0.85, 0.12, 0.10]')::numeric, 4) AS distancia_bruta,
+    ROUND(((1 - (embedding <=> '[0.85, 0.12, 0.10]')) * 100)::numeric, 2) AS similaridade_pct
+FROM documentos_ia
+WHERE (1 - (embedding <=> '[0.85, 0.12, 0.10]')) >= 0.80
+ORDER BY embedding <=> '[0.85, 0.12, 0.10]' ASC
+LIMIT 5;
+```
+
+**Explicação Pedagógica:**
+- O índice **HNSW** constrói um grafo de múltiplas camadas navegáveis, permitindo buscas vetoriais aproximadas (ANN - Approximate Nearest Neighbor) em milissegundos mesmo com milhões de registros.
+- A fórmula `1 - distancia_cosseno` converte a distância (onde 0 é idêntico) em similaridade de cosseno (onde 1 ou 100% é idêntico).
+</details>
+
+---
+
 ### 📝 Checklist de Conclusão da Aula
 
 - [ ] Compreendi a vantagem do driver `@neondatabase/serverless` em arquiteturas Edge.

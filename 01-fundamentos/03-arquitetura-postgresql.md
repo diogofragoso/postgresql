@@ -192,6 +192,80 @@ flowchart LR
 
 ---
 
+### 6. Atividade Prática 02: Provocando Tuplas Mortas e Rodando o VACUUM
+
+Neste laboratório prático, você vai verificar a criação de **Dead Tuples** nos metadados do PostgreSQL e observar a ação do comando `VACUUM` limpando o lixo em tempo real.
+
+#### Roteiro do Laboratório:
+
+```sql
+-- Passo 1: Criar tabela de teste de bloat
+CREATE TABLE teste_bloat (
+    id INT,
+    conteudo TEXT
+);
+
+-- Passo 2: Inserir 1.000 linhas
+INSERT INTO teste_bloat (id, conteudo)
+SELECT s, 'Dado original do registro número ' || s
+FROM generate_series(1, 1000) AS s;
+
+-- Passo 3: Consultar o catálogo para ver tuplas vivas e mortas
+SELECT 
+    relname AS tabela,
+    n_live_tup AS tuplas_vivas,
+    n_dead_tup AS tuplas_mortas
+FROM pg_stat_user_tables
+WHERE relname = 'teste_bloat';
+```
+
+Resultado inicial esperado:
+```text
+   tabela    | tuplas_vivas | tuplas_mortas 
+-------------+--------------+---------------
+ teste_bloat |         1000 |             0
+```
+
+Agora, vamos atualizar todos os 1.000 registros para provocar tuplas mortas via MVCC:
+
+```sql
+-- Passo 4: Atualizar todos os registros (Gera 1.000 tuplas mortas!)
+UPDATE teste_bloat SET conteudo = 'Dado atualizado pela segunda vez';
+
+-- Passo 5: Atualizar novamente (Gera mais 1.000 tuplas mortas!)
+UPDATE teste_bloat SET conteudo = 'Dado atualizado pela terceira vez';
+
+-- Passo 6: Inspecionar o catálogo de estatísticas novamente
+SELECT 
+    relname AS tabela,
+    n_live_tup AS tuplas_vivas,
+    n_dead_tup AS tuplas_mortas
+FROM pg_stat_user_tables
+WHERE relname = 'teste_bloat';
+```
+
+<details>
+<summary>💡 Clique para ver o resultado após os updates e como limpar</summary>
+
+Você verá que `tuplas_vivas = 1000`, mas agora `tuplas_mortas = 2000`! O banco tem o dobro de lixo em relação a dados úteis.
+
+Para forçar a limpeza imediata das tuplas mortas, execute:
+```sql
+VACUUM VERBOSE teste_bloat;
+
+-- Verifique novamente o catálogo:
+SELECT 
+    relname AS tabela,
+    n_live_tup AS tuplas_vivas,
+    n_dead_tup AS tuplas_mortas
+FROM pg_stat_user_tables
+WHERE relname = 'teste_bloat';
+```
+*O número de `tuplas_mortas` cairá para 0, deixando o espaço físico das páginas pronto para reutilização!*
+</details>
+
+---
+
 ### 📝 Checklist de Conclusão da Aula
 
 - [ ] Entendi a diferença entre processos dedicados por conexão e modelo de threads.

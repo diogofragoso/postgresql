@@ -141,6 +141,55 @@ O PostgreSQL possui um detector de deadlock em background (`deadlock_timeout`, p
 
 ---
 
+### 5. Atividade Prática 05: Laboratório de Concorrência e Simulação de Deadlock
+
+Neste laboratório empolgante, você abrirá duas abas/sessões paralelas (no Beekeeper Studio ou em dois terminais `psql`) para reproduzir intencionalmente um **Deadlock** e ver o detector de ciclos do PostgreSQL entrar em ação!
+
+#### Passo 1: Preparar o Cenário
+Execute este script em qualquer uma das sessões para criar os dados:
+
+```sql
+CREATE TABLE transferencias_banco (
+    conta_id INT PRIMARY KEY,
+    titular TEXT NOT NULL,
+    saldo NUMERIC(10,2) NOT NULL
+);
+
+INSERT INTO transferencias_banco VALUES
+    (1, 'Alice', 1000.00),
+    (2, 'Bob', 1000.00);
+```
+
+#### Passo 2: Executar as Sessões Concorrentes (Abra 2 Abas no Beekeeper)
+
+| Ordem | 🟢 Sessão 1 (Aba 1) | 🔵 Sessão 2 (Aba 2) |
+| :---: | :--- | :--- |
+| **1** | `BEGIN;` | - |
+| **2** | - | `BEGIN;` |
+| **3** | `UPDATE transferencias_banco SET saldo = saldo - 100 WHERE conta_id = 1;` *(Trava conta 1!)* | - |
+| **4** | - | `UPDATE transferencias_banco SET saldo = saldo - 200 WHERE conta_id = 2;` *(Trava conta 2!)* |
+| **5** | `UPDATE transferencias_banco SET saldo = saldo + 100 WHERE conta_id = 2;` *(Fica aguardando a Sessão 2...)* | - |
+| **6** | - | `UPDATE transferencias_banco SET saldo = saldo + 200 WHERE conta_id = 1;` *(Dispara o conflito!)* |
+
+<details>
+<summary>💡 Clique para entender o que aconteceu e como o Postgres reagiu</summary>
+
+Após cerca de 1 segundo (tempo padrão de `deadlock_timeout`), a Sessão 2 receberá a mensagem:
+
+```text
+ERROR: deadlock detected
+DETAIL: Process 1420 waits for ShareLock on transaction 892; Process 891 waits for ShareLock on transaction 893.
+HINT: See server log for query details.
+```
+
+O PostgreSQL abortou a transação da Sessão 2 automaticamente para liberar o travamento da Sessão 1.
+
+**Como consertar no código da aplicação:**
+Ordene os IDs antes de executar a query! Ambas as sessões deveriam sempre atualizar a `conta_id = 1` antes da `conta_id = 2`. Assim, a Sessão 2 teria esperado a Sessão 1 terminar a transação inteira antes de iniciar, sem nunca causar um impasse cíclico.
+</details>
+
+---
+
 ### 📝 Checklist de Transações Seguras
 
 - [ ] Nunca deixo transações abertas esquecidas no backend sem fechar conexão.

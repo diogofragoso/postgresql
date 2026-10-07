@@ -93,7 +93,44 @@ graph TD
 
 ---
 
-### 5. Resumo e Próximos Passos
+### 5. Atividade Prática 01: Explorando Catálogos e Metadados do Sistema
+
+Mesmo antes de criar suas próprias tabelas, o PostgreSQL já vem com centenas de tabelas internas de catálogo no schema `pg_catalog`. Vamos explorar o ecossistema através de consultas SQL reais:
+
+#### Desafio Prático:
+1. Abra o seu cliente SQL (pelo Neon Web SQL Editor ou terminal `psql`).
+2. Consulte a versão exata do PostgreSQL e o usuário com o qual você está conectado.
+3. Descubra quais extensões avançadas já vêm prontas para ativação no seu banco.
+4. Escreva uma consulta que conte o número total de extensões disponíveis no catálogo `pg_available_extensions`.
+
+```sql
+-- 1. Descobrir detalhes do motor e da sessão
+SELECT 
+    version() AS versao_postgresql,
+    current_user AS usuario_ativo,
+    current_database() AS banco_conectado;
+
+-- 2. Inspecionar extensões de Inteligência Artificial e Geolocalização
+SELECT name, default_version, comment
+FROM pg_available_extensions
+WHERE name IN ('vector', 'postgis', 'uuid-ossp', 'pg_stat_statements')
+ORDER BY name;
+```
+
+<details>
+<summary>💡 Clique para ver a solução do cálculo total de extensões</summary>
+
+```sql
+SELECT 
+    COUNT(*) AS total_extensoes_disponiveis
+FROM pg_available_extensions;
+```
+*No PostgreSQL moderno, você verá mais de 40 a 70 extensões prontas para uso imediato!*
+</details>
+
+---
+
+### 6. Resumo e Próximos Passos
 
 | Conceito | Descrição |
 | :--- | :--- |
@@ -103,7 +140,7 @@ graph TD
 | **PostgreSQL** | O mais avançado e extensível SGBD relacional de código aberto do mundo. |
 
 > [!TIP]
-> Na próxima aula, configuraremos nosso ambiente local com Docker, cliente `psql` e conheceremos as opções de conexão para iniciar a prática real!
+> Na próxima aula, você escolherá entre duas trilhas práticas: configurar seu próprio servidor Ubuntu Server com Docker ou provisionar seu banco na nuvem Neon em 2 minutos!
 
 ---
 
@@ -113,6 +150,7 @@ graph TD
 - [ ] O que significa cada letra da sigla ACID e por que o Isolamento é crucial em sistemas concorrentes?
 - [ ] Por que dizemos que o PostgreSQL é um banco objeto-relacional e não apenas puramente relacional?
 - [ ] Qual o papel de Michael Stonebraker na computação e na criação do Postgres?
+- [ ] Consegui consultar as extensões disponíveis no catálogo do PostgreSQL com sucesso.
 
 ---
 > **Navegação**: [🏠 Início](../README.md) | [Módulo 01](./README.md) | [Próxima Aula: Escolha da Trilha de Setup ➡️](./02-instalacao-e-configuracao.md)

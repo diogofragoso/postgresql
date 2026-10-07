@@ -82,7 +82,8 @@ flowchart TD
     subgraph M6["Módulo 6 e 7: Prática e Referência"]
         F1["Projeto E-commerce Real"]
         F2["Banco de 30+ Exercícios"]
-        F3["Cheatsheet e Solução de Problemas"]
+        F3["5 Roteiros de Laboratório (50 min)"]
+        F4["Cheatsheet e Solução de Problemas"]
     end
 
     M1:::fund --> M2:::model
@@ -98,12 +99,12 @@ flowchart TD
 
 | Módulo | Descrição dos Tópicos | Link do Guia |
 | :--- | :--- | :---: |
-| **01. Fundamentos** | História do PostgreSQL, SGBDs relacionais vs NoSQL, Preparação do Ubuntu Server do zero, instalação oficial do Docker, `psql`, Beekeeper Studio Portable e arquitetura interna (processos, memória, WAL, MVCC). | [Acessar Guia](./01-fundamentos/) |
-| **02. Modelagem e DDL** | Diagramação ER, Normalização (1FN a 3FN), Tipos Primitivos, JSONB, Arrays, UUID, Chaves Primárias, Estrangeiras, Check Constraints e boas práticas de schema. | [Acessar Guia](./02-modelagem-e-ddl/) |
-| **03. DML e Consultas** | `INSERT`, `UPDATE`, `DELETE`, `ON CONFLICT` (UPSERT), `SELECT`, `WHERE`, `LIKE/ILIKE`, `GROUP BY`, `HAVING`, todas as variantes de `JOIN` e Subqueries. | [Acessar Guia](./03-manipulacao-dml-e-consultas/) |
-| **04. SQL Avançado** | Views e Views Materializadas, Índices (B-Tree, GIN, GiST, BRIN), Análise de planos com `EXPLAIN ANALYZE`, ACID, Níveis de Isolamento, Locks, Triggers, Procedures e Window Functions. | [Acessar Guia](./04-recursos-avancados-sql/) |
-| **05. Neon PostgreSQL** | Arquitetura Serverless (Separação Compute e Storage Pageserver/Safekeeper), Connection Pooling com PgBouncer, Database Branching para CI/CD, Scale to Zero e PITR. | [Acessar Guia](./05-neon-postgresql-cloud/) |
-| **06. Projetos e Desafios**| Estudo de caso completo de E-commerce do zero à modelagem e relatórios, mais banco de 30 exercícios com gabarito retrátil. | [Acessar Guia](./06-projetos-praticos-e-desafios/) |
+| **01. Fundamentos** | História do PostgreSQL, SGBDs relacionais vs NoSQL, Preparação Ubuntu Server Docker, Beekeeper Studio Portable, arquitetura (processos, memória, WAL, MVCC) e **Caderno de Atividades Práticas (Subitens 1.1 a 1.3)**. | [Acessar Guia](./01-fundamentos/) |
+| **02. Modelagem e DDL** | Diagramação ER, Normalização (1FN a 3FN), Tipos Ricos, JSONB, Arrays, UUID, Chaves Primárias, Estrangeiras, Check Constraints e **Caderno de Atividades Práticas (Subitens 2.1 a 2.3)**. | [Acessar Guia](./02-modelagem-e-ddl/) |
+| **03. DML e Consultas** | `INSERT`, `UPDATE`, `DELETE`, `ON CONFLICT` (UPSERT), `SELECT`, `WHERE`, `LIKE/ILIKE`, `GROUP BY`, `HAVING`, todas as variantes de `JOIN` e **Caderno de Atividades Práticas (Subitens 3.1 a 3.4)**. | [Acessar Guia](./03-manipulacao-dml-e-consultas/) |
+| **04. SQL Avançado** | Views e Materialized Views, Índices (B-Tree, GIN, GiST, BRIN), Análise com `EXPLAIN ANALYZE`, ACID, Locks, Deadlock, Triggers e **Caderno de Atividades Práticas (Subitens 4.1 a 4.5)**. | [Acessar Guia](./04-recursos-avancados-sql/) |
+| **05. Neon PostgreSQL** | Arquitetura Serverless (Compute vs Storage), Connection Pooling, Branching, Scale to Zero, PITR, pgvector e **Caderno de Atividades Práticas (Subitens 5.1 a 5.4)**. | [Acessar Guia](./05-neon-postgresql-cloud/) |
+| **06. Projetos e Desafios**| Estudo de caso E-commerce completo, banco de 30 exercícios com gabarito retrátil e 5 Roteiros de Laboratório Guiados de 50 min. | [Acessar Guia](./06-projetos-praticos-e-desafios/) |
 | **07. Referência Rápida** | Cheat Sheet completo de comandos SQL e Guia de Resolução de Erros comuns (conexão, permissão, deadlock, timeout). | [Acessar Guia](./07-guias-de-referencia-rapida/) |
 
 ---

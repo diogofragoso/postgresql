@@ -181,4 +181,54 @@ Para cada campo abaixo, defina o tipo de dado ideal do PostgreSQL:
 </details>
 
 ---
+
+### 7. Atividade Prática 03: Laboratório de Tipos Avançados (UUID e JSONB)
+
+Nesta atividade prática, você colocará a mão na massa criando uma tabela moderna para sensores de IoT, utilizando UUIDs nativos, colunas com fuso horário e documentos semi-estruturados em JSONB.
+
+#### Requisitos do Desafio:
+1. Crie uma tabela `leituras_sensores` com:
+   - `id`: UUID gerado automaticamente por `gen_random_uuid()`.
+   - `dispositivo`: nome textual do sensor.
+   - `telemetria`: coluna JSONB contendo temperatura, pressão e tags.
+   - `capturado_em`: timestamp com fuso horário padrão atual.
+2. Insira pelo menos 3 leituras com valores variados.
+3. Escreva uma consulta que filtre leituras onde a `temperatura` seja estritamente superior a 30 graus.
+4. Escreva uma consulta usando o operador `@>` para buscar apenas dispositivos da marca `'Bosch'`.
+
+<details>
+<summary>💡 Clique para ver o script completo da solução</summary>
+
+```sql
+-- 1. Criação da tabela
+CREATE TABLE leituras_sensores (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    dispositivo TEXT NOT NULL,
+    telemetria JSONB NOT NULL,
+    capturado_em TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 2. Carga de dados em lote
+INSERT INTO leituras_sensores (dispositivo, telemetria) VALUES
+    ('Sensor-Alfa', '{"fabricante": "Bosch", "temperatura": 32.4, "pressao_psi": 101.3, "status": "alerta"}'),
+    ('Sensor-Beta', '{"fabricante": "Siemens", "temperatura": 22.1, "pressao_psi": 98.7, "status": "normal"}'),
+    ('Sensor-Gama', '{"fabricante": "Bosch", "temperatura": 38.9, "pressao_psi": 105.0, "status": "critico"}');
+
+-- 3. Consulta convertendo valor do JSONB para número e filtrando
+SELECT 
+    dispositivo,
+    (telemetria->>'temperatura')::NUMERIC AS temp_graus,
+    capturado_em
+FROM leituras_sensores
+WHERE (telemetria->>'temperatura')::NUMERIC > 30.0
+ORDER BY temp_graus DESC;
+
+-- 4. Consulta com operador de contenção (@>)
+SELECT dispositivo, telemetria
+FROM leituras_sensores
+WHERE telemetria @> '{"fabricante": "Bosch"}';
+```
+</details>
+
+---
 > **Navegação**: [⬅️ Aula Anterior: Modelagem e ER](./01-modelagem-relacional.md) | [Módulo 02](./README.md) | [Próxima Aula: DDL e Constraints ➡️](./03-ddl-tabelas-e-constraints.md)

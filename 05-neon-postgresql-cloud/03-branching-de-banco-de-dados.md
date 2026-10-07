@@ -154,12 +154,56 @@ sequenceDiagram
 
 ---
 
-### 📝 Desafio Prático
+### 7. Atividade Prática 06: Laboratório de Branching e Destruição Segura
 
-1. Crie um branch chamado `sandbox-experimentos` no seu projeto do Neon.
-2. Conecte-se a esse branch e crie uma tabela de teste chamada `tabela_secreta`.
-3. Conecte-se de volta ao branch `main` e execute `SELECT * FROM tabela_secreta;`.
-4. Observe o erro retornado confirmando o isolamento total entre os branches.
+Neste laboratório, você experimentará a maior vantagem competitiva do Neon: o poder de testar operações destrutivas ou migrações complexas em uma cópia exata de produção sem correr nenhum risco de corromper os dados reais.
+
+#### Roteiro Passo a Passo:
+
+**Passo 1 (No Branch `main`)**: Crie uma tabela com dados importantes:
+```sql
+CREATE TABLE clientes_producao (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nome TEXT NOT NULL,
+    saldo NUMERIC(10,2) NOT NULL
+);
+
+INSERT INTO clientes_producao (nome, saldo) VALUES
+    ('Empresa Alfa', 50000.00),
+    ('Empresa Beta', 120000.00);
+```
+
+**Passo 2**: Crie um branch chamado `experimento-destrutivo` a partir do `main`:
+- No Neon Console: clique em **Branches -> New Branch** -> Nome: `experimento-destrutivo`.
+- Ou via CLI: `neonctl branches create --name experimento-destrutivo`
+
+**Passo 3 (No Branch `experimento-destrutivo`)**:
+Conecte-se ao novo branch (via Beekeeper Studio ou Neon SQL Editor) e execute o pior pesadelo de um banco tradicional:
+```sql
+-- Dropar a tabela inteira!
+DROP TABLE clientes_producao;
+
+-- Verificar que a tabela sumiu no branch de teste:
+-- SELECT * FROM clientes_producao; -> ERRO: relation does not exist
+```
+
+**Passo 4 (De volta ao Branch `main`)**:
+Reconecte-se ao branch principal e execute:
+```sql
+SELECT * FROM clientes_producao;
+```
+
+<details>
+<summary>💡 Clique para ver o resultado e explicação técnica</summary>
+
+**Resultado:**
+Todos os registros de `Empresa Alfa` e `Empresa Beta` continuam **100% intactos e preservados** no branch `main`!
+
+Graças à tecnologia de *Copy-on-Write* do Pageserver do Neon:
+1. O comando `DROP TABLE` registrou a exclusão apenas nos metadados exclusivos do branch `experimento-destrutivo`.
+2. O branch `main` nunca foi tocado nem sofreu locks de tabela.
+3. Agora você pode simplesmente apagar o branch de teste no painel do Neon (`neonctl branches delete experimento-destrutivo`), sem deixar nenhum rastro ou custo residual!
+</details>
 
 ---
 > **Navegação**: [⬅️ Aula Anterior: Setup e Conexões](./02-setup-e-primeiros-passos.md) | [Módulo 05](./README.md) | [Próxima Aula: Escala e PITR ➡️](./04-escala-e-alta-disponibilidade.md)

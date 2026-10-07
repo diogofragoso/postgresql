@@ -46,6 +46,11 @@ flowchart LR
    - Alterações de tabelas em produção com zero downtime (`NOT VALID`).
    - Comparativo técnico entre `DROP`, `TRUNCATE` e `DELETE`.
 
+4. [**Atividades Práticas do Módulo 02**](./04-atividades-praticas.md)
+   - **Subitem 2.1**: Modelagem Relacional e Normalização de Sistema Escolar (1FN a 3FN).
+   - **Subitem 2.2**: Laboratório de Tipos Modernos com UUID e JSONB para Sensores IoT.
+   - **Subitem 2.3**: Criação de Schema e Defesa de Integridade com Constraints Rígidas.
+
 ---
 
 ## 🧭 Navegação Rápida

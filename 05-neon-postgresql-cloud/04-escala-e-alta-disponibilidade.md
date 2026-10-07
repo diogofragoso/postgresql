@@ -94,6 +94,59 @@ Em **menos de 2 segundos**, você tem uma nova instância com todo o estado ínt
 
 ---
 
+### 4. Atividade Prática 07: Simulando Desastre e Resgate Instantâneo com PITR
+
+Neste exercício, você executará uma exclusão acidental e resgatará seus dados utilizando a recuperação pontual no tempo (*Point-in-Time Recovery*).
+
+#### Roteiro do Laboratório:
+
+**Passo 1**: Crie uma tabela e insira dados no branch `main`, anotando o horário exato:
+```sql
+CREATE TABLE folha_pagamento (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    funcionario TEXT NOT NULL,
+    salario_liquido NUMERIC(10,2) NOT NULL
+);
+
+INSERT INTO folha_pagamento (funcionario, salario_liquido) VALUES
+    ('Carlos Mendes', 8500.00),
+    ('Renata Albuquerque', 12300.00);
+
+-- Verifique o timestamp exato do sistema (UTC):
+SELECT NOW() AT TIME ZONE 'UTC' AS momento_salvo;
+```
+*(Exemplo de horário retornado: `2026-10-07 15:40:00`)*
+
+**Passo 2 (O Desastre!)**: Aguarde 10 segundos e execute a deleção acidental:
+```sql
+DELETE FROM folha_pagamento; -- Esqueceu o WHERE!
+
+-- Verifique que tudo foi apagado:
+SELECT COUNT(*) FROM folha_pagamento; -- Retorna 0!
+```
+
+**Passo 3 (O Resgate pelo Neon Console)**:
+1. No painel do Neon, vá em **Branches -> New Branch**.
+2. Defina o nome do branch como `resgate-folha`.
+3. Em **Branch from**, marque a opção **Past Point in Time (Timestamp)**.
+4. Escolha o horário de 1 minuto atrás (ou o valor exato anotado no Passo 1).
+5. Clique em **Create Branch**.
+
+**Passo 4 (Validação dos Dados Resgatados)**:
+Conecte-se ao novo branch `resgate-folha` e consulte:
+```sql
+SELECT * FROM folha_pagamento;
+```
+
+<details>
+<summary>💡 Clique para ver o resultado da recuperação</summary>
+
+Todos os funcionários e salários aparecem **completamente intactos** no novo branch!
+Em vez de perder o dia restaurando dumps pesados de backup, você resgatou a empresa inteira em menos de 3 segundos utilizando a linha do tempo do Pageserver do Neon.
+</details>
+
+---
+
 ### 📝 Resumo Operacional
 
 | Desafio Tradicional | Solução Serverless no Neon |

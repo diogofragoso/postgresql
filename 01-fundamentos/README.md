@@ -45,6 +45,11 @@ flowchart TD
    - MVCC desmistificado: as colunas `xmin`, `xmax` e `ctid`.
    - Limpeza de tuplas mortas e o papel do `Autovacuum`.
 
+4. [**Atividades Práticas do Módulo 01**](./04-atividades-praticas.md)
+   - **Subitem 1.1**: Auditoria de Metadados e Catálogos do PostgreSQL (`pg_database`, `pg_tables`, extensões).
+   - **Subitem 1.2**: Validação de Conectividade com `psql` e Beekeeper Studio Portable.
+   - **Subitem 1.3**: Laboratório de MVCC, Tuplas Mortas e Recuperação com `VACUUM`.
+
 ---
 
 ## 🧭 Navegação Rápida

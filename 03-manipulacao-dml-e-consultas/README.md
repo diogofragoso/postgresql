@@ -52,6 +52,12 @@ flowchart LR
    - Subconsultas escalares e correlacionadas com `EXISTS`.
    - Consultas avançadas de loop com `CROSS JOIN LATERAL`.
 
+5. [**Atividades Práticas do Módulo 03**](./05-atividades-praticas.md)
+   - **Subitem 3.1**: Operações Atômicas e UPSERT com `ON CONFLICT DO UPDATE`.
+   - **Subitem 3.2**: Consultas Textuais, Paginação por Cursor e Tratamento de Nulos.
+   - **Subitem 3.3**: Agregações Gerenciais e Matrizes de Vendas com `FILTER`.
+   - **Subitem 3.4**: Cruzamento Multitabelas e Detecção de Órfãos com Anti-Joins.
+
 ---
 
 ## 🧭 Navegação Rápida

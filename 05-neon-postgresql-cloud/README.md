@@ -44,11 +44,13 @@ flowchart LR
    - Branches completos vs Branches apenas com schema.
    - Estratégia de sala de aula: Um banco isolado para cada estudante sem conflito.
    - Branches efêmeros em pipelines de CI/CD (GitHub Actions).
+   - **Atividade Prática 06**: Laboratório de Branching, destruição de tabelas com DROP e isolamento de branch.
 
 4. [**Aula 04: Autoscaling, Scale to Zero e Point-in-Time Recovery (PITR)**](./04-escala-e-alta-disponibilidade.md)
    - Autoscaling vertical a quente sem reiniciar o servidor.
    - Como funciona a suspensão e o cold start (< 500ms).
    - Point-in-Time Recovery (PITR): Como restaurar desastres em 2 segundos voltando no tempo.
+   - **Atividade Prática 07**: Simulação de desastre com `TRUNCATE` acidental e resgate instantâneo via PITR.
 
 5. [**Aula 05: Integração com Aplicações Modernas (Node.js, Prisma, Drizzle, Python e IA)**](./05-integracao-com-aplicacoes.md)
    - O driver `@neondatabase/serverless` sobre HTTP/WebSockets.
@@ -56,6 +58,12 @@ flowchart LR
    - Conexão tipada com Drizzle ORM.
    - Conexão em Python com `psycopg`.
    - Busca semântica e IA vetorial com a extensão `pgvector`.
+
+6. [**Atividades Práticas do Módulo 05**](./06-atividades-praticas.md)
+   - **Subitem 5.1**: Conectividade com Direct vs Pooled Endpoints e Beekeeper Studio.
+   - **Subitem 5.2**: Database Branching: Isolamento e Teste de Migração Destrutiva.
+   - **Subitem 5.3**: Simulação de Desastre com TRUNCATE e Resgate Instantâneo com PITR.
+   - **Subitem 5.4**: Inteligência Artificial e Busca Semântica Vetorial com HNSW.
 
 ---
 

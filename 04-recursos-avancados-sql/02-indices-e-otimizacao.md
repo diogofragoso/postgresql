@@ -143,6 +143,71 @@ SELECT * FROM auditoria_acessos WHERE status_codigo = 500;
 
 ---
 
+### 6. Atividade Prática 04: Desafio de Otimização e Index Only Scan
+
+Neste desafio prático, você aplicará os conceitos de `EXPLAIN (ANALYZE, BUFFERS)` e criará um índice de cobertura (*Covering Index*) para transformar uma varredura lenta em um **Index Only Scan** de altíssima performance.
+
+#### Roteiro do Desafio:
+
+```sql
+-- Passo 1: Criar tabela de transações
+CREATE TABLE transacoes_contas (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    conta_id INT NOT NULL,
+    valor NUMERIC(10,2) NOT NULL,
+    tipo VARCHAR(10) NOT NULL,
+    efetuada_em TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Passo 2: Gerar 150.000 registros para simular produção
+INSERT INTO transacoes_contas (conta_id, valor, tipo)
+SELECT 
+    (random() * 1000)::INT + 1,
+    (random() * 5000)::NUMERIC(10,2),
+    (ARRAY['PIX', 'TED', 'BOLETO'])[floor(random() * 3 + 1)]
+FROM generate_series(1, 150000);
+```
+
+#### A Consulta Alvo:
+```sql
+EXPLAIN (ANALYZE, BUFFERS)
+SELECT tipo, SUM(valor)
+FROM transacoes_contas
+WHERE conta_id = 500
+GROUP BY tipo;
+```
+*Observe que o plano exibirá `Seq Scan on transacoes_contas`, lendo 150.000 linhas do disco.*
+
+#### Sua Missão:
+Crie um índice que permita ao PostgreSQL responder a essa consulta **sem tocar na tabela física (Heap)**, alcançando o status de `Index Only Scan`.
+
+<details>
+<summary>💡 Clique para ver o índice ideal e a análise do plano</summary>
+
+```sql
+-- Criando o Índice de Cobertura (Covering Index):
+-- conta_id fica na chave de busca da B-Tree
+-- tipo e valor são incluídos nas folhas via INCLUDE:
+CREATE INDEX idx_transacoes_cob_conta 
+ON transacoes_contas (conta_id) 
+INCLUDE (tipo, valor);
+
+-- Reexecutar a consulta alvo:
+EXPLAIN (ANALYZE, BUFFERS)
+SELECT tipo, SUM(valor)
+FROM transacoes_contas
+WHERE conta_id = 500
+GROUP BY tipo;
+```
+
+**Resultado esperado:**
+* O plano agora exibirá **`Index Only Scan using idx_transacoes_cob_conta`**.
+* O tempo de execução cairá de ~20-30 ms para **menos de 0.2 ms** (uma melhoria de mais de 100x!).
+* `Heap Fetches: 0` (o motor não precisou ler nenhum bloco de dados da tabela física).
+</details>
+
+---
+
 ### 📝 Checklist de Otimização
 
 - [ ] Identifiquei as queries lentas ativando a extensão `pg_stat_statements`.
