@@ -49,7 +49,7 @@ flowchart TD
     end
 
     SharedMemory <--> BackgroundWorkers
-    BackgroundWorkers -->|Flush periódico| Disk[(Armazenamento: PGDATA & WAL)]
+    BackgroundWorkers -->|Flush periódico| Disk[(Armazenamento: PGDATA e WAL)]
 ```
 
 > [!NOTE]
@@ -185,9 +185,9 @@ Se tuplas antigas continuassem se acumulando no disco indefinidamente, as tabela
 ```mermaid
 flowchart LR
     Insert[INSERT] -->|Cria Tupla Ativa| Table[(Página de Dados)]
-    Update[UPDATE] -->|Cria Nova Tupla & Marca Antiga como Morta| Table
+    Update[UPDATE] -->|Cria Nova Tupla e Marca Antiga como Morta| Table
     Delete[DELETE] -->|Marca Tupla como Morta| Table
-    Table -->|Autovacuum Varre & Limpa| FreeSpace[Espaço Reutilizável]
+    Table -->|Autovacuum Varre e Limpa| FreeSpace[Espaço Reutilizável]
 ```
 
 ---

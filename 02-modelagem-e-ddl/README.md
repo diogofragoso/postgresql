@@ -4,7 +4,7 @@
 
 ![Nível](https://img.shields.io/badge/Nível-Iniciante_ao_Intermediário-blue?style=for-the-badge)
 ![Aulas](https://img.shields.io/badge/Aulas-3_Capítulos-blue?style=for-the-badge)
-![Foco](https://img.shields.io/badge/Foco-Schema_Design_&_Constraints-green?style=for-the-badge)
+![Foco](https://img.shields.io/badge/Foco-Design_de_Schema_e_Constraints-green?style=for-the-badge)
 
 </div>
 
@@ -16,8 +16,8 @@ Neste módulo, você aprenderá como projetar bancos de dados resilientes, escal
 
 ```mermaid
 flowchart LR
-    A["01. Modelagem Relacional & ER"] --> B["02. Tipos de Dados Ricos"]
-    B --> C["03. DDL & Constraints Robustas"]
+    A["01. Modelagem Relacional e ER"] --> B["02. Tipos de Dados Ricos"]
+    B --> C["03. DDL e Constraints Robustas"]
 ```
 
 ---

@@ -23,8 +23,8 @@ Um **SGBD** (Sistema de Gerenciamento de Banco de Dados, ou *DBMS - Database Man
 ```mermaid
 flowchart LR
     App[Aplicação Web / Mobile] -->|Consultas SQL| SGBD[SGBD: PostgreSQL Engine]
-    SGBD -->|Gerencia Memória & Locks| RAM[(Memória RAM / Shared Buffers)]
-    SGBD -->|Persiste Páginas & Logs| Disk[(Disco / SSD / NVMe)]
+    SGBD -->|Gerencia Memória e Locks| RAM[(Memória RAM / Shared Buffers)]
+    SGBD -->|Persiste Páginas e Logs| Disk[(Disco / SSD / NVMe)]
 ```
 
 #### Funções Principais de um SGBD:

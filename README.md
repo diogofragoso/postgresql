@@ -1,4 +1,4 @@
-# 🐘 Guia Definitivo de Estudos: PostgreSQL & Neon Serverless
+# 🐘 Guia Definitivo de Estudos: PostgreSQL e Neon Serverless
 
 <div align="center">
 
@@ -47,39 +47,39 @@ flowchart TD
     classDef proj fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#880e4f;
 
     subgraph M1["Módulo 1: Fundamentos"]
-        A1["01. Intro a Banco de Dados"] --> A2["02. Instalação & Ferramental"]
-        A2 --> A3["03. Arquitetura Interna & MVCC"]
+        A1["01. Intro a Banco de Dados"] --> A2["02. Instalação e Ferramental"]
+        A2 --> A3["03. Arquitetura Interna e MVCC"]
     end
 
-    subgraph M2["Módulo 2: Modelagem & DDL"]
-        B1["01. Modelagem Relacional & ER"] --> B2["02. Tipos de Dados Ricos"]
-        B2 --> B3["03. DDL & Constraints Robustas"]
+    subgraph M2["Módulo 2: Modelagem e DDL"]
+        B1["01. Modelagem Relacional e ER"] --> B2["02. Tipos de Dados Ricos"]
+        B2 --> B3["03. DDL e Constraints Robustas"]
     end
 
-    subgraph M3["Módulo 3: Manipulação DML & Consultas"]
-        C1["01. DML & UPSERT"] --> C2["02. Filtros & Ordenação"]
-        C2 --> C3["03. Agregações & GROUP BY"]
-        C3 --> C4["04. JOINs & Subconsultas"]
+    subgraph M3["Módulo 3: Manipulação DML e Consultas"]
+        C1["01. DML e UPSERT"] --> C2["02. Filtros e Ordenação"]
+        C2 --> C3["03. Agregações e GROUP BY"]
+        C3 --> C4["04. JOINs e Subconsultas"]
     end
 
     subgraph M4["Módulo 4: Recursos Avançados SQL"]
-        D1["01. Views & Materialized Views"] --> D2["02. Índices & EXPLAIN ANALYZE"]
-        D2 --> D3["03. Transações, ACID & Locks"]
-        D3 --> D4["04. Stored Procedures & Triggers"]
-        D4 --> D5["05. Window Functions & CTEs"]
+        D1["01. Views e Materialized Views"] --> D2["02. Índices e EXPLAIN ANALYZE"]
+        D2 --> D3["03. Transações, ACID e Locks"]
+        D3 --> D4["04. Stored Procedures e Triggers"]
+        D4 --> D5["05. Window Functions e CTEs"]
     end
 
     subgraph M5["Módulo 5: Neon PostgreSQL Cloud"]
-        E1["01. Arquitetura Serverless Neon"] --> E2["02. Setup & Conexões Pooling"]
+        E1["01. Arquitetura Serverless Neon"] --> E2["02. Setup e Conexões Pooling"]
         E2 --> E3["03. Database Branching (Git-like)"]
-        E3 --> E4["04. Autoscaling & PITR"]
+        E3 --> E4["04. Autoscaling e PITR"]
         E4 --> E5["05. Integração com Aplicações"]
     end
 
-    subgraph M6["Módulo 6 & 7: Prática & Referência"]
+    subgraph M6["Módulo 6 e 7: Prática e Referência"]
         F1["Projeto E-commerce Real"]
         F2["Banco de 30+ Exercícios"]
-        F3["Cheatsheet & Troubleshooting"]
+        F3["Cheatsheet e Solução de Problemas"]
     end
 
     M1:::fund --> M2:::model
@@ -96,11 +96,11 @@ flowchart TD
 | Módulo | Descrição dos Tópicos | Link do Guia |
 | :--- | :--- | :---: |
 | **01. Fundamentos** | História do PostgreSQL, SGBDs relacionais vs NoSQL, Instalação local, Docker, `psql`, pgAdmin e arquitetura do PostgreSQL (processos, memória, WAL, MVCC). | [Acessar Guia](./01-fundamentos/) |
-| **02. Modelagem & DDL** | Diagramação ER, Normalização (1FN a 3FN), Tipos Primitivos, JSONB, Arrays, UUID, Chaves Primárias, Estrangeiras, Check Constraints e boas práticas de schema. | [Acessar Guia](./02-modelagem-e-ddl/) |
-| **03. DML & Consultas** | `INSERT`, `UPDATE`, `DELETE`, `ON CONFLICT` (UPSERT), `SELECT`, `WHERE`, `LIKE/ILIKE`, `GROUP BY`, `HAVING`, todas as variantes de `JOIN` e Subqueries. | [Acessar Guia](./03-manipulacao-dml-e-consultas/) |
+| **02. Modelagem e DDL** | Diagramação ER, Normalização (1FN a 3FN), Tipos Primitivos, JSONB, Arrays, UUID, Chaves Primárias, Estrangeiras, Check Constraints e boas práticas de schema. | [Acessar Guia](./02-modelagem-e-ddl/) |
+| **03. DML e Consultas** | `INSERT`, `UPDATE`, `DELETE`, `ON CONFLICT` (UPSERT), `SELECT`, `WHERE`, `LIKE/ILIKE`, `GROUP BY`, `HAVING`, todas as variantes de `JOIN` e Subqueries. | [Acessar Guia](./03-manipulacao-dml-e-consultas/) |
 | **04. SQL Avançado** | Views e Views Materializadas, Índices (B-Tree, GIN, GiST, BRIN), Análise de planos com `EXPLAIN ANALYZE`, ACID, Níveis de Isolamento, Locks, Triggers, Procedures e Window Functions. | [Acessar Guia](./04-recursos-avancados-sql/) |
 | **05. Neon PostgreSQL** | Arquitetura Serverless (Separação Compute e Storage Pageserver/Safekeeper), Connection Pooling com PgBouncer, Database Branching para CI/CD, Scale to Zero e PITR. | [Acessar Guia](./05-neon-postgresql-cloud/) |
-| **06. Projetos & Desafios**| Estudo de caso completo de E-commerce do zero à modelagem e relatórios, mais banco de 30 exercícios com gabarito retrátil. | [Acessar Guia](./06-projetos-praticos-e-desafios/) |
+| **06. Projetos e Desafios**| Estudo de caso completo de E-commerce do zero à modelagem e relatórios, mais banco de 30 exercícios com gabarito retrátil. | [Acessar Guia](./06-projetos-praticos-e-desafios/) |
 | **07. Referência Rápida** | Cheat Sheet completo de comandos SQL e Guia de Resolução de Erros comuns (conexão, permissão, deadlock, timeout). | [Acessar Guia](./07-guias-de-referencia-rapida/) |
 
 ---

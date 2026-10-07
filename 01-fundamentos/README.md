@@ -16,8 +16,8 @@ Bem-vindo ao primeiro módulo do curso! Aqui estabelecemos a base teórica e ins
 
 ```mermaid
 flowchart LR
-    A["01. Introdução & ACID"] --> B["02. Instalação & Ferramental"]
-    B --> C["03. Arquitetura Interna & MVCC"]
+    A["01. Introdução e ACID"] --> B["02. Instalação e Ferramental"]
+    B --> C["03. Arquitetura Interna e MVCC"]
 ```
 
 ---

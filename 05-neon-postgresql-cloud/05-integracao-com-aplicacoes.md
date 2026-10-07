@@ -1,0 +1,205 @@
+# ⚡ Módulo 05: Neon Serverless PostgreSQL
+## 📑 Aula 05: Integração com Aplicações Modernas (Node.js, Prisma, Drizzle, Python e IA)
+
+> **Navegação**: [⬅️ Aula Anterior: Escala e PITR](./04-escala-e-alta-disponibilidade.md) | [Módulo 05](./README.md) | [Módulo 06: Projetos Práticos ➡️](../06-projetos-praticos-e-desafios/README.md)
+
+---
+
+### 🎯 Objetivos de Aprendizagem
+Ao final desta aula, você será capaz de:
+- Conectar aplicações serverless (Vercel, Cloudflare, AWS Lambda) usando o driver oficial **`@neondatabase/serverless`** via HTTP/WebSockets.
+- Configurar o **Prisma ORM** com separação de URL de runtime (com pooling) e URL direta de migrações (`directUrl`).
+- Integrar com o **Drizzle ORM** para alta performance e tipagem estrita em TypeScript.
+- Conectar aplicações **Python** usando `psycopg` e `SQLAlchemy`.
+- Ativar e utilizar a extensão **`pgvector`** no Neon para armazenar embeddings vetoriais e criar buscas semânticas de Inteligência Artificial.
+
+---
+
+### 1. O Driver Serverless: `@neondatabase/serverless`
+
+Bancos relacionais tradicionais dependem de conexões TCP com estado mantido permanentemente. Em plataformas Edge (Cloudflare Workers, Vercel Edge), sockets TCP diretos muitas vezes são bloqueados ou lentos para negociar o handshake SSL.
+
+O Neon criou um driver open source que permite enviar queries SQL empacotadas via **HTTP/Fetch** ou **WebSockets seguros**:
+
+```mermaid
+flowchart LR
+    Edge[Cloudflare Worker / Vercel Edge] -->|Sub-millisecond HTTP/WS Query| NeonProxy[Neon Serverless WebSocket Proxy]
+    NeonProxy -->|Protocolo Postgres Nativo| PG[(Compute Engine)]
+```
+
+#### Exemplo em TypeScript / Node.js:
+
+```bash
+npm install @neondatabase/serverless
+```
+
+```typescript
+import { neon } from '@neondatabase/serverless';
+
+// Inicializa o cliente apontando para a variável de ambiente
+const sql = neon(process.env.DATABASE_URL!);
+
+async function buscarUsuariosAtivos() {
+  // Executa queries como uma Tagged Template Literal:
+  const usuarios = await sql`
+    SELECT id, nome, email 
+    FROM usuarios 
+    WHERE ativo = true 
+    ORDER BY id DESC 
+    LIMIT 10
+  `;
+  
+  console.log(usuarios);
+  return usuarios;
+}
+```
+
+> [!TIP]
+> O driver `@neondatabase/serverless` previne ataques de **SQL Injection** automaticamente ao parametrizar todas as variáveis interpoladas nos template literals!
+
+---
+
+### 2. Configurando Prisma ORM com o Neon
+
+O Prisma é um dos ORMs mais populares do ecossistema TypeScript. Para funcionar com perfeição no Neon, configuramos duas URLs no arquivo `prisma/schema.prisma`:
+
+```prisma
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")        // Endpoint com -pooler (Para a aplicação rodando)
+  directUrl = env("DIRECT_URL")          // Endpoint direto sem -pooler (Para o prisma migrate)
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  nome      String
+  criadoEm  DateTime @default(now())
+}
+```
+
+#### Arquivo `.env`:
+```env
+# Runtime (Pooler com PgBouncer integrado):
+DATABASE_URL="postgresql://alex:senha@ep-divine-pond-123456-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require"
+
+# Migrações DDL (Conexão direta ao backend):
+DIRECT_URL="postgresql://alex:senha@ep-divine-pond-123456.us-east-2.aws.neon.tech/neondb?sslmode=require"
+```
+
+---
+
+### 3. Integração com Drizzle ORM
+
+O Drizzle ORM oferece uma camada leve e tipada com suporte nativo de primeira classe ao Neon via HTTP:
+
+```bash
+npm install drizzle-orm @neondatabase/serverless
+npm install -D drizzle-kit
+```
+
+```typescript
+import { neon } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-http';
+import { pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
+
+// Definindo o schema
+export const produtos = pgTable('produtos', {
+  id: serial('id').primaryKey(),
+  nome: text('nome').notNull(),
+  criadoEm: timestamp('criado_em').defaultNow(),
+});
+
+// Conectando
+const sql = neon(process.env.DATABASE_URL!);
+export const db = drizzle(sql);
+
+// Consultando com tipagem completa:
+const resultado = await db.select().from(produtos);
+```
+
+---
+
+### 4. Integração com Python (Psycopg e SQLAlchemy)
+
+No ecossistema Python, utilizamos o driver moderno `psycopg` (versão 3):
+
+```bash
+pip install "psycopg[binary]" sqlalchemy
+```
+
+```python
+import psycopg
+
+DATABASE_URL = "postgresql://alex:senha@ep-divine-pond-123456.us-east-2.aws.neon.tech/neondb?sslmode=require"
+
+# Conexão direta com context manager seguro
+with psycopg.connect(DATABASE_URL) as conn:
+    with conn.cursor() as cur:
+        cur.execute("SELECT id, nome, email FROM usuarios WHERE ativo = %s;", (True,))
+        linhas = cur.fetchall()
+        for linha in linhas:
+            print(f"ID: {linha[0]} | Nome: {linha[1]} | E-mail: {linha[2]}")
+```
+
+---
+
+### 5. Busca Semântica e IA: `pgvector` no Neon
+
+O PostgreSQL e o Neon suportam a extensão **`pgvector`**, permitindo armazenar embeddings vetoriais (gerados por modelos como OpenAI text-embedding-3, Gemini ou Llama) e fazer busca por similaridade semântica diretamente em SQL!
+
+```mermaid
+flowchart LR
+    Texto["Texto do Usuário: 'Tênis de corrida confortável'"] --> LLM[Modelo de IA / Embeddings]
+    LLM --> Vetor["Vetor: [0.015, -0.042, 0.891, ...]"]
+    Vetor -->|Busca por Distância Cosseno <=> | NeonPG[(PostgreSQL + pgvector)]
+    NeonPG --> TopResultados["Produtos semanticamente mais relevantes"]
+```
+
+#### Ativando e Testando a Busca Vetorial:
+
+```sql
+-- 1. Ativar a extensão
+CREATE EXTENSION IF NOT EXISTS vector;
+
+-- 2. Criar tabela de artigos com vetor de 3 dimensões (simplificado para exemplo)
+CREATE TABLE documentos_ia (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    conteudo TEXT NOT NULL,
+    embedding VECTOR(3) -- Na prática, use 1536 (OpenAI) ou 768 (Gemini)
+);
+
+-- 3. Inserir documentos com seus vetores
+INSERT INTO documentos_ia (conteudo, embedding) VALUES
+    ('Guia completo de PostgreSQL e SQL', '[0.9, 0.1, 0.1]'),
+    ('Como cozinhar uma lasanha tradicional', '[0.1, 0.8, 0.2]'),
+    ('Apostila de administração de bancos de dados', '[0.85, 0.15, 0.12]');
+
+-- 4. Busca Semântica por proximidade de Cosseno (Operador <=>):
+-- Buscando o documento mais próximo do conceito [0.88, 0.12, 0.09]:
+SELECT 
+    conteudo,
+    embedding <=> '[0.88, 0.12, 0.09]' AS distancia_cosseno
+FROM documentos_ia
+ORDER BY distancia_cosseno ASC
+LIMIT 2;
+```
+
+> [!NOTE]
+> Quanto menor a distância do cosseno (`<=>`), mais semanticamente próximo o documento está da busca! Essa técnica alimenta sistemas modernos de **RAG (Retrieval-Augmented Generation)**.
+
+---
+
+### 📝 Checklist de Conclusão da Aula
+
+- [ ] Compreendi a vantagem do driver `@neondatabase/serverless` em arquiteturas Edge.
+- [ ] Sei configurar o Prisma com `url` (pooler) e `directUrl` (direct).
+- [ ] Sei conectar aplicações Python com `psycopg`.
+- [ ] Ativei a extensão `vector` e executei uma consulta de similaridade vetorial.
+
+---
+> **Navegação**: [⬅️ Aula Anterior: Escala e PITR](./04-escala-e-alta-disponibilidade.md) | [Módulo 05](./README.md) | [Módulo 06: Projetos Práticos ➡️](../06-projetos-praticos-e-desafios/README.md)

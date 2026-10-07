@@ -61,7 +61,7 @@ flowchart TD
     C_FK -- Sim --> C_CK{Passou na CHECK Constraint?}
     C_CK -- Sim --> OK[(Registro Gravado com Sucesso!)]
 
-    C_PK -- Não --> Err[Rollback & Mensagem de Violação]
+    C_PK -- Não --> Err[Rollback e Mensagem de Violação]
     C_NN -- Não --> Err
     C_UQ -- Não --> Err
     C_FK -- Não --> Err

@@ -101,8 +101,8 @@ Em outros bancos de dados, isso exige transações complexas ou queries separada
 flowchart TD
     Req["INSERT INTO usuarios (...)"] --> Chk{Existe conflito no índice UNIQUE?}
     Chk -- Não --> Ins["Insere nova linha normalmente"]
-    Chk -- Sim & DO NOTHING --> Ignora["Ignora silenciosamente sem dar erro"]
-    Chk -- Sim & DO UPDATE --> Upsert["Executa UPDATE usando valores da pseudo-tabela EXCLUDED"]
+    Chk -- Sim e DO NOTHING --> Ignora["Ignora silenciosamente sem dar erro"]
+    Chk -- Sim e DO UPDATE --> Upsert["Executa UPDATE usando valores da pseudo-tabela EXCLUDED"]
 ```
 
 #### Caso 1: Ignorar se já existir (`DO NOTHING`)
